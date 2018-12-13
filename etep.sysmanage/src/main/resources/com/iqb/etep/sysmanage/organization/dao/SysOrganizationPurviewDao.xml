@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.iqb.etep.sysmanage.organization.dao.SysOrganizationPurviewDao" >
+  <resultMap id="BaseResultMap" type="com.iqb.etep.sysmanage.organization.bean.SysOrganizationPurview" >
+    <id column="ID" property="id" jdbcType="INTEGER" />
+    <result column="ORG_ID" property="orgId" jdbcType="INTEGER" />
+    <result column="ORG_MENU_ID" property="orgMenuId" jdbcType="INTEGER" />
+    <result column="CREATE_USER" property="createUser" jdbcType="VARCHAR" />
+    <result column="CREATE_TIME" property="createTime" jdbcType="INTEGER" />
+    <result column="LAST_USER" property="lastUser" jdbcType="VARCHAR" />
+    <result column="LAST_TIME" property="lastTime" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    ID, ORG_ID, ORG_MENU_ID, CREATE_USER, CREATE_TIME, LAST_USER, LAST_TIME
+  </sql>
+  <select id="selectSelective" resultType="java.lang.Integer" parameterType="java.util.Map" >
+   	SELECT ORG_MENU_ID
+    FROM IQB_SYS_ORGANIZATION_PURVIEW
+    WHERE ORG_ID = #{orgId,jdbcType=INTEGER} 
+  </select>
+  <select id="selectCountByMenuId" resultType="java.lang.Integer" parameterType="java.lang.Integer">
+  	SELECT COUNT(1)
+  	FROM IQB_SYS_ORGANIZATION_PURVIEW	
+	WHERE ORG_MENU_ID = #{menuId,jdbcType=INTEGER}	
+  </select>
+  <select id="selectCountSysMenuPurview" resultType="java.lang.Integer" parameterType="java.util.Map">
+  	SELECT COUNT(1)
+  	FROM IQB_SYS_STATION_PURVIEW
+	<where>
+		<if test="orgId != null and orgId != ''">
+			STATION_ROLE_ID IN (SELECT ID FROM IQB_SYS_STATION_ROLE WHERE ORG_ID = #{orgId,jdbcType=INTEGER})
+		</if>
+		<if test="oldMenuIds != null and oldMenuIds != ''">
+			AND STATION_MENU_ID IN 	<foreach item="item" collection="oldMenuIds" separator="," open="(" close=")" index="index">  
+								      #{item,jdbcType=INTEGER}
+								    </foreach>  
+		</if>
+	</where> 
+  </select>
+  <delete id="deleteByOrgId" parameterType="java.lang.Integer" >
+    DELETE FROM IQB_SYS_ORGANIZATION_PURVIEW
+    WHERE ORG_ID = #{orgId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="java.util.Map" >
+    INSERT INTO IQB_SYS_ORGANIZATION_PURVIEW (ORG_ID, ORG_MENU_ID, CREATE_USER, CREATE_TIME, LAST_USER, LAST_TIME) VALUES 
+    <foreach item="item" collection="newMenuIds" separator="," open="" close="" index="index">  
+      (#{orgId, jdbcType=INTEGER}, #{item, jdbcType=INTEGER}, #{createUser, jdbcType=VARCHAR}, #{createTime, jdbcType=INTEGER}, #{lastUser, jdbcType=VARCHAR}, #{lastTime, jdbcType=INTEGER})
+    </foreach>  
+  </insert>
+  
+  <select id="getAllOrgInfo" resultType="java.util.HashMap">
+  	SELECT ID AS id, ORG_NAME AS text FROM IQB_SYS_ORGANIZATION_INFO  WHERE DELETE_FLAG=1
+  </select>
+  
+  
+</mapper>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.iqb.etep.sysmanage.log.dao.SysLogDao">
+	<select id="getSysMenuForLog" resultType="com.iqb.etep.sysmanage.sysmenu.bean.SysMenu">
+		SELECT 
+		  ID,
+		  MENU_NAME AS menuName,
+		  MENU_CODE AS menuCode,
+		  MENU_URL AS menuUrl
+		FROM
+		  IQB_SYS_MENU 
+	</select>
+	
+</mapper>

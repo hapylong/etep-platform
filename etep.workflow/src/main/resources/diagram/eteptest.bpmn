@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:activiti="http://activiti.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://www.activiti.org/test">
+  <process id="eteptest" name="etep流程测试" isExecutable="true">
+    <startEvent id="startevent1" name="Start"></startEvent>
+    <userTask id="Alibaba" name="etep测试流程" activiti:assignee="#{procTaskUser}"></userTask>
+    <userTask id="Alibaba1" name="1部门1" activiti:candidateGroups="yijiyonghu"></userTask>
+    <exclusiveGateway id="exclusivegateway1" name="Exclusive Gateway"></exclusiveGateway>
+    <sequenceFlow id="flow3" sourceRef="Alibaba1" targetRef="exclusivegateway1"></sequenceFlow>
+    <userTask id="Alibaba2" name="2部门2" activiti:candidateGroups="erjiyonghu"></userTask>
+    <sequenceFlow id="flow4" sourceRef="exclusivegateway1" targetRef="Alibaba2">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${money>100}]]></conditionExpression>
+    </sequenceFlow>
+    <userTask id="Alibaba4" name="4部门3" activiti:candidateGroups="aiqianbangsanji"></userTask>
+    <sequenceFlow id="flow5" sourceRef="exclusivegateway1" targetRef="Alibaba4">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${money<100}]]></conditionExpression>
+    </sequenceFlow>
+    <userTask id="Alibaba3" name="3部门3" activiti:candidateGroups="aiqianbangsanji"></userTask>
+    <sequenceFlow id="flow6" sourceRef="Alibaba2" targetRef="Alibaba3"></sequenceFlow>
+    <userTask id="Alibaba5" name="5部门4" activiti:candidateGroups="aiqianbangsiji"></userTask>
+    <sequenceFlow id="flow8" sourceRef="Alibaba4" targetRef="Alibaba5"></sequenceFlow>
+    <parallelGateway id="parallelgateway1" name="Parallel Gateway"></parallelGateway>
+    <sequenceFlow id="flow9" sourceRef="Alibaba5" targetRef="parallelgateway1"></sequenceFlow>
+    <userTask id="Alibaba6" name="6部门1" activiti:candidateGroups="yijiyonghu"></userTask>
+    <sequenceFlow id="flow10" sourceRef="parallelgateway1" targetRef="Alibaba6"></sequenceFlow>
+    <userTask id="Alibaba8" name="8部门3" activiti:candidateGroups="aiqianbangsanji"></userTask>
+    <sequenceFlow id="flow11" sourceRef="parallelgateway1" targetRef="Alibaba8"></sequenceFlow>
+    <userTask id="Alibaba7" name="7部门2" activiti:candidateGroups="erjiyonghu"></userTask>
+    <sequenceFlow id="flow12" sourceRef="Alibaba6" targetRef="Alibaba7"></sequenceFlow>
+    <userTask id="Alibaba9" name="9部门4" activiti:candidateGroups="aiqianbangsiji"></userTask>
+    <sequenceFlow id="flow13" sourceRef="Alibaba8" targetRef="Alibaba9"></sequenceFlow>
+    <parallelGateway id="parallelgateway2" name="Parallel Gateway"></parallelGateway>
+    <sequenceFlow id="flow14" sourceRef="Alibaba7" targetRef="parallelgateway2"></sequenceFlow>
+    <sequenceFlow id="flow15" sourceRef="Alibaba9" targetRef="parallelgateway2"></sequenceFlow>
+    <userTask id="Alibaba10" name="10部门2" activiti:candidateGroups="erjiyonghu"></userTask>
+    <sequenceFlow id="flow16" sourceRef="parallelgateway2" targetRef="Alibaba10"></sequenceFlow>
+    <endEvent id="endevent1" name="End"></endEvent>
+    <sequenceFlow id="flow17" sourceRef="Alibaba10" targetRef="endevent1"></sequenceFlow>
+    <sequenceFlow id="flow18" sourceRef="startevent1" targetRef="Alibaba"></sequenceFlow>
+    <sequenceFlow id="flow19" sourceRef="Alibaba" targetRef="Alibaba1"></sequenceFlow>
+    <sequenceFlow id="flow20" sourceRef="Alibaba3" targetRef="Alibaba5"></sequenceFlow>
+  </process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_eteptest">
+    <bpmndi:BPMNPlane bpmnElement="eteptest" id="BPMNPlane_eteptest">
+      <bpmndi:BPMNShape bpmnElement="startevent1" id="BPMNShape_startevent1">
+        <omgdc:Bounds height="35.0" width="35.0" x="20.0" y="260.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="Alibaba" id="BPMNShape_Alibaba">
+        <omgdc:Bounds height="55.0" width="105.0" x="80.0" y="250.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="Alibaba1" id="BPMNShape_Alibaba1">
+        <omgdc:Bounds height="55.0" width="105.0" x="220.0" y="250.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="exclusivegateway1" id="BPMNShape_exclusivegateway1">
+        <omgdc:Bounds height="40.0" width="40.0" x="370.0" y="258.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="Alibaba2" id="BPMNShape_Alibaba2">
+        <omgdc:Bounds height="55.0" width="105.0" x="440.0" y="170.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="Alibaba4" id="BPMNShape_Alibaba4">
+        <omgdc:Bounds height="55.0" width="105.0" x="440.0" y="330.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="Alibaba3" id="BPMNShape_Alibaba3">
+        <omgdc:Bounds height="55.0" width="105.0" x="590.0" y="170.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="Alibaba5" id="BPMNShape_Alibaba5">
+        <omgdc:Bounds height="55.0" width="105.0" x="700.0" y="251.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="parallelgateway1" id="BPMNShape_parallelgateway1">
+        <omgdc:Bounds height="40.0" width="40.0" x="830.0" y="257.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="Alibaba6" id="BPMNShape_Alibaba6">
+        <omgdc:Bounds height="55.0" width="105.0" x="870.0" y="170.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="Alibaba8" id="BPMNShape_Alibaba8">
+        <omgdc:Bounds height="55.0" width="105.0" x="870.0" y="330.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="Alibaba7" id="BPMNShape_Alibaba7">
+        <omgdc:Bounds height="55.0" width="105.0" x="1020.0" y="170.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="Alibaba9" id="BPMNShape_Alibaba9">
+        <omgdc:Bounds height="55.0" width="105.0" x="1020.0" y="330.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="parallelgateway2" id="BPMNShape_parallelgateway2">
+        <omgdc:Bounds height="40.0" width="40.0" x="1160.0" y="260.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="Alibaba10" id="BPMNShape_Alibaba10">
+        <omgdc:Bounds height="55.0" width="105.0" x="1220.0" y="250.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="endevent1" id="BPMNShape_endevent1">
+        <omgdc:Bounds height="35.0" width="35.0" x="1370.0" y="260.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge bpmnElement="flow3" id="BPMNEdge_flow3">
+        <omgdi:waypoint x="325.0" y="277.0"></omgdi:waypoint>
+        <omgdi:waypoint x="370.0" y="278.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow4" id="BPMNEdge_flow4">
+        <omgdi:waypoint x="390.0" y="258.0"></omgdi:waypoint>
+        <omgdi:waypoint x="492.0" y="225.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow5" id="BPMNEdge_flow5">
+        <omgdi:waypoint x="390.0" y="298.0"></omgdi:waypoint>
+        <omgdi:waypoint x="492.0" y="330.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow6" id="BPMNEdge_flow6">
+        <omgdi:waypoint x="545.0" y="197.0"></omgdi:waypoint>
+        <omgdi:waypoint x="590.0" y="197.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow8" id="BPMNEdge_flow8">
+        <omgdi:waypoint x="492.0" y="330.0"></omgdi:waypoint>
+        <omgdi:waypoint x="752.0" y="306.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow9" id="BPMNEdge_flow9">
+        <omgdi:waypoint x="805.0" y="278.0"></omgdi:waypoint>
+        <omgdi:waypoint x="830.0" y="277.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow10" id="BPMNEdge_flow10">
+        <omgdi:waypoint x="850.0" y="257.0"></omgdi:waypoint>
+        <omgdi:waypoint x="922.0" y="225.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow11" id="BPMNEdge_flow11">
+        <omgdi:waypoint x="850.0" y="297.0"></omgdi:waypoint>
+        <omgdi:waypoint x="922.0" y="330.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow12" id="BPMNEdge_flow12">
+        <omgdi:waypoint x="975.0" y="197.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1020.0" y="197.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow13" id="BPMNEdge_flow13">
+        <omgdi:waypoint x="975.0" y="357.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1020.0" y="357.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow14" id="BPMNEdge_flow14">
+        <omgdi:waypoint x="1072.0" y="225.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1180.0" y="260.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow15" id="BPMNEdge_flow15">
+        <omgdi:waypoint x="1072.0" y="330.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1180.0" y="300.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow16" id="BPMNEdge_flow16">
+        <omgdi:waypoint x="1200.0" y="280.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1220.0" y="277.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow17" id="BPMNEdge_flow17">
+        <omgdi:waypoint x="1325.0" y="277.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1370.0" y="277.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow18" id="BPMNEdge_flow18">
+        <omgdi:waypoint x="55.0" y="277.0"></omgdi:waypoint>
+        <omgdi:waypoint x="80.0" y="277.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow19" id="BPMNEdge_flow19">
+        <omgdi:waypoint x="185.0" y="277.0"></omgdi:waypoint>
+        <omgdi:waypoint x="220.0" y="277.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow20" id="BPMNEdge_flow20">
+        <omgdi:waypoint x="642.0" y="225.0"></omgdi:waypoint>
+        <omgdi:waypoint x="752.0" y="251.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>

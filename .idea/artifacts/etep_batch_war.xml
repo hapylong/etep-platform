@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="etep.batch:war">
+    <output-path>$PROJECT_DIR$/etep.batch/target</output-path>
+    <root id="archive" name="etep.batch.war">
+      <element id="artifact" artifact-name="etep.batch:war exploded" />
+    </root>
+  </artifact>
+</component>

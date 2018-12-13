@@ -1,0 +1,389 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright 2010-2013 the original author or authors. Licensed under the 
+	Apache License, Version 2.0 (the "License"); you may not use this file except 
+	in compliance with the License. You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 
+	Unless required by applicable law or agreed to in writing, software distributed 
+	under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES 
+	OR CONDITIONS OF ANY KIND, either express or implied. See the License for 
+	the specific language governing permissions and limitations under the License. -->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.iqb.etep.sysmanage.user.dao.SysUserDao">
+
+	<insert id="insertUser">
+		insert into IQB_SYS_USER (USER_CODE, USER_NAME
+		,ORG_ID,DEPT_ID,USER_PASSWORD,
+		REAL_NAME,USER_EMAIL,STATUS,REMARK,USER_PHONE,CREATE_USER,CREATE_TIME,VERSION,DELETE_FLAG,LAST_USER,LAST_TIME,IS_HQ)
+		values(#{userCode},#{userName},#{orgId},#{deptId},#{userPassword},#{realName},#{userEmail},#{status},#{remark},#{userPhone},#{createUser},
+		#{createTime},#{version},#{deleteFlag},#{lastUser},#{lastTime},#{isHq})
+	</insert>
+	
+	<select id="selectSysUserCount" resultType="java.lang.Integer" parameterType="java.lang.Integer">
+	  select
+	  count(1) from IQB_SYS_USER
+	  <where>
+	    <if test="id!=null">
+	       ID=#{id,jdbcType=INTEGER}
+	    </if>
+	    <if test="stationId!=null">
+	     AND STATION_ID=#{stationId,jdbcType=INTEGER}
+	    </if>
+	  <if test="deptId!=null">
+	    AND DEPT_ID=#{deptId,jdbcType=INTEGER}
+	 </if>
+	  <if test="orgId!=null">
+	   AND ORG_ID=#{orgId,jdbcType=INTEGER}
+	  </if> 
+	  <if test="userCode!=null">
+	  AND USER_CODE=#{userCode,jdbcType=VARCHAR}
+	  </if>
+	  <if test="userName!=null">
+	  AND USER_NAME=#{userName,jdbcType=VARCHAR}
+	  </if>
+	  <if test="userPassword!=null">
+	  AND USER_PASSWORD=#{userPassword,jdbcType=VARCHAR}
+	  </if>
+	  <if test="realName!=null">
+	   AND REAL_NAME=#{realName,jdbcType=VARCHAR}
+	  </if>
+	  <if test="userPassword!=null">
+	   AND USER_PASSWORD=#{userPassword,jdbcType=VARCHAR}
+	  </if>
+	  <if test="sex!=null">
+      AND SEX=#{sex,jdbcType=INTEGER}
+	  </if>
+	  <if test="idType!=null">
+	  AND ID_TYPE=#{idType,jdbcType=INTEGER}
+	  </if>
+	  <if test="idNo!=null">
+	  AND ID_NO=#{idNo,jdbcType=VARCHAR}
+	  </if>
+	  <if test="userPhone!=null">
+	  AND USER_PHONE=#{userPhone,jdbcType=VARCHAR}
+	  </if>
+	  <if test="userEmail!=null">
+	   AND USER_EMAIL=#{userEmail,jdbcType=VARCHAR}
+	  </if>
+	  <if test="address!=null">
+	  AND ADDRESS=#{address,jdbcType=VARCHAR}
+	  </if>
+	  <if test="status!=null">
+	  AND STATUS=#{status,jdbcType=INTEGER}
+	  </if>
+	  <if test="createUser!=null">
+	  AND CREATE_USER=#{createUser,jdbcType=VARCHAR}
+	  </if>
+	  <if test="createTime!=null">
+	  AND CREATE_TIME=#{createTime,jdbcType=INTEGER}
+	  </if>
+	  <if test="lastUser!=null">
+	  AND LAST_USER=#{lastUser,jdbcType=VARCHAR}
+	  </if>
+	  <if test="lastTime!=null">
+	  AND LAST_TIME=#{lastTime,jdbcType=INTEGER}
+	  </if>
+	  <if test="remark!=null">
+	  AND REMARK=#{remark,jdbcType=VARCHAR}
+	  </if>
+	  <if test="deleteFlag!=null">
+	  AND DELETE_FLAG=#{deleteFlag,jdbcType=INTEGER}
+	  </if>
+	  <if test="version!=null">
+	  AND VERSION=#{version,jdbcTYpe=INTEGER}
+	  </if>
+	  <if test="orgName!=null">
+	  AND ORG_NAME=#{orgName,jdbcType=VARCHAR}
+	  </if>
+	  <if test="stationCode">
+	  AND STATION_CODE=#{stationCode,jdbcTYpe=VARCHAR}
+	  </if>
+	  
+	  </where>
+	  
+	
+	</select>
+	
+
+	<select id="selectSysUserById" parameterType="int"
+		resultType="com.iqb.etep.sysmanage.user.bean.SysUser">
+		select
+		ID as id ,USER_CODE as userCode, USER_NAME as
+		userName ,ORG_ID as orgId, DEPT_ID as deptId
+		,REAL_NAME as realName
+		,USER_EMAIL as userEmail ,STATUS as
+		status,REMARK as remark,USER_PHONE
+		as userPhone
+		from IQB_SYS_USER where
+		ID=#{id} and DELETE_FLAG=1
+	</select>
+
+
+	<update id="updateSysUser" parameterType="com.iqb.etep.sysmanage.user.bean.SysUser">
+		update IQB_SYS_USER set
+		LAST_USER = #{lastUser},LAST_TIME=#{lastTime},DELETE_FLAG=2
+		where ID=#{id}
+	</update>
+
+	<update id="updateUserPassword" parameterType="com.iqb.etep.sysmanage.user.bean.SysUser">
+		update
+		IQB_SYS_USER set USER_PASSWORD=#{userPassword} where id=#{id}
+	</update>
+
+	<delete id="deleteSysUsers" parameterType="java.util.List">
+		delete from IQB_SYS_USER where id in
+		<foreach collection="list" index="index" item="item" open="("
+			separator="," close=")">
+			#{item}
+		</foreach>
+	</delete>
+
+	<update id="updateSysUserAll" parameterType="com.iqb.etep.sysmanage.user.bean.SysUser">
+		update IQB_SYS_USER
+		set
+		USER_CODE=#{userCode},USER_NAME=#{userName},ORG_ID=#{orgId},DEPT_ID=#{deptId},USER_PHONE=#{userPhone},
+		REAL_NAME=#{realName},USER_EMAIL=#{userEmail},STATUS=#{status},Remark=#{remark}
+		where ID=#{id}
+
+	</update>
+
+	<sql id="Base_Column_List">
+		ID as id,STATION_ID as stationId,DEPT_ID as deptId,ORG_ID
+		as
+		orgId,STATION_ROLE_NAME as stationRoleName ,USER_CODE as
+		userCode,USER_NAME as userName,USER_PASSWORD as
+		userPassword,REAL_NAME
+		as realName,SEX as sex,ID_TYPE as idType,ID_NO
+		as idNo,
+		USER_PHONE as
+		userPhone,USER_EMAIL as userEmail,ADDRESS as
+		address,STATUS as
+		status,CREATE_USER as createUser,CREATE_TIME as
+		createTime,LAST_USER
+		as
+		lastUser,LAST_TIME as lastTime,REMARK as
+		remark,VERSION as version
+	</sql>
+
+	<select id="selectByPage" parameterType="java.util.Map" resultMap="SysUserResultMap">
+		SELECT 
+		  IQB_SYS_USER.ID,
+		  IQB_SYS_USER.STATION_ID,
+		  IQB_SYS_USER.USER_CODE,
+		  IQB_SYS_USER.ORG_ID,
+		  IQB_SYS_USER.DEPT_ID,
+		  IQB_SYS_USER.REAL_NAME,
+		  IQB_SYS_USER.USER_PHONE,
+		  USER_EMAIL,
+		  IQB_SYS_USER.CREATE_TIME,
+		  IQB_SYS_USER.STATUS,
+		  IQB_SYS_USER.REMARK,
+		  STATION_ROLE_NAME,
+		  IQB_SYS_USER.STATION_CODE,
+		  USER_NAME,
+		  IQB_SYS_ORGANIZATION_INFO.ORG_NAME,
+		  is_hq 
+		FROM
+		  (
+		    IQB_SYS_USER 
+		    LEFT JOIN IQB_SYS_STATION_ROLE 
+		      ON IQB_SYS_USER.STATION_ID = IQB_SYS_STATION_ROLE.ID
+		  ) 
+		  LEFT JOIN IQB_SYS_ORGANIZATION_INFO 
+		    ON IQB_SYS_USER.ORG_ID = IQB_SYS_ORGANIZATION_INFO.ID 
+		WHERE IQB_SYS_USER.DELETE_FLAG = 1 
+		  AND IQB_SYS_USER.is_hq IS NULL 
+		  AND IQB_SYS_ORGANIZATION_INFO.ID IN 
+		  (SELECT 
+		    IQB_SYS_ORGANIZATION_INFO.ID 
+		  FROM
+		    IQB_SYS_ORGANIZATION_INFO 
+		  WHERE IQB_SYS_ORGANIZATION_INFO.ORG_CODE LIKE "%" #{orgCode}"%"
+		  )
+		<if test="stationCode!=null and stationCode!='' ">
+			and IQB_SYS_USER.STATION_CODE like "%"#{stationCode}"%"
+		</if>
+		<if test="userPhone!=null and userPhone!=''">
+			and USER_PHONE like  "%"#{userPhone}"%"
+		</if>
+		<if test="realName!=null and realName!='' ">
+			and REAL_NAME like "%"#{realName}"%"
+		</if>
+		 order by IQB_SYS_USER.ORG_ID  , DEPT_ID ASC 
+	</select>
+
+	<select id="selectHqByPage" parameterType="java.util.Map" resultMap="SysUserResultMap">
+	   SELECT 
+		  IQB_SYS_USER.ID,
+		  IQB_SYS_USER.STATION_ID,
+		  IQB_SYS_USER.USER_CODE,
+		  IQB_SYS_USER.ORG_ID,
+		  IQB_SYS_USER.DEPT_ID,
+		  IQB_SYS_USER.STATION_CODE,
+		  IQB_SYS_USER.REAL_NAME,
+		  IQB_SYS_USER.USER_PHONE,
+		  USER_EMAIL,
+		  IQB_SYS_USER.CREATE_TIME,
+		  IQB_SYS_USER.STATUS,
+		  IQB_SYS_USER.REMARK,
+		  STATION_ROLE_NAME,
+		  USER_NAME,
+		  is_hq,
+		  IQB_SYS_ORGANIZATION_INFO.ORG_NAME 
+		FROM
+		  IQB_SYS_USER 
+		  LEFT JOIN IQB_SYS_STATION_ROLE 
+		    ON IQB_SYS_USER.STATION_ID = IQB_SYS_STATION_ROLE.ID 
+		  LEFT JOIN IQB_SYS_ORGANIZATION_INFO 
+		    ON IQB_SYS_USER.ORG_ID = IQB_SYS_ORGANIZATION_INFO.ID 
+		WHERE IQB_SYS_USER.DELETE_FLAG = 1 
+		<if test="stationCode!=null and stationCode!='' ">
+			and IQB_SYS_USER.STATION_CODE like "%"#{stationCode}"%"
+		</if>
+		<if test="userPhone!=null and userPhone!=''">
+			and USER_PHONE like  "%"#{userPhone}"%"
+		</if>
+		<if test="realName!=null and realName!='' ">
+			and REAL_NAME like "%"#{realName}"%"
+		</if>
+		<if test="orgId!=null and orgId!='' ">
+		   AND IQB_SYS_USER.ORG_ID = #{orgId}
+		</if> 
+		<if test="userCode!=null and userCode!='' ">
+		   AND IQB_SYS_USER.USER_CODE like "%"#{userCode}"%"
+		</if> 
+		order by IQB_SYS_USER.ORG_ID  , DEPT_ID ASC 
+	</select>
+	<resultMap id="SysUserResultMap" type="com.iqb.etep.sysmanage.user.bean.SysUser">
+		<id column="ID" property="id"></id>
+		<result column="USER_CODE" property="userCode"></result>
+		<result column="STATION_ID" property="stationId"></result>
+		<result column="STATION_CODE" property="stationCode"></result>
+		<result column="USER_PHONE" property="userPhone"></result>
+		<result column="USER_NAME" property="userName"></result>
+		<result column="REAL_NAME" property="realName"></result>
+		<result column="USER_EMAIL" property="userEmail"></result>
+		<result column="CREATE_Time" property="createTime"></result>
+		<result column="STATUS" property="status"></result>
+		<result column="REMARK" property="remark"></result>
+		<result column="STATION_ROLE_NAME" property="stationRoleName"></result>
+		<result column="ORG_NAME" property="orgName"></result>
+		<result column="ORG_ID" property="orgId"></result>
+		<result column="is_hq" property="isHq"></result>
+	</resultMap>
+
+	<select id="getUserCode" parameterType="java.lang.String"
+		resultType="com.iqb.etep.sysmanage.user.bean.SysUser">
+		select ID as id ,USER_PASSWORD as userPassword from
+		IQB_SYS_USER
+		where
+		USER_CODE=#{userCode};
+	</select>
+
+	<update id="updateModifyUserPassword" parameterType="com.iqb.etep.sysmanage.user.bean.SysUser">
+		update
+		IQB_SYS_USER
+		set USER_PASSWORD as
+		userPassword where
+		USER_CODE=#{userCode} and DELETE_FLAG=1
+	</update>
+
+	<select id="getUserEmail" parameterType="java.lang.String"
+		resultType="com.iqb.etep.sysmanage.user.bean.SysUser">
+		select ID as id ,USER_EMAIL as userEmail from IQB_SYS_USER
+		where
+		USER_CODE=#{userCode} and DELETE_FLAG=1
+	</select>
+    
+    <select id="selectExitUserCode" parameterType="java.lang.String"
+		resultType="com.iqb.etep.sysmanage.user.bean.SysUser">
+		select ID as id , USER_CODE as userCode from IQB_SYS_USER
+		where
+		USER_CODE=#{userCode} and DELETE_FLAG=1;
+	</select>
+	
+
+	
+	<select id="selectUserAll" parameterType="int" resultMap="SysUserResultMap">
+		select ID as id, USER_CODE as userCode , USER_NAME as userName ,USER_EMAIL
+		as userEmail , USER_PHONE as userPhone from
+		IQB_SYS_USER where ID!=#{id} and DELETE_FLAG=1
+
+	</select>
+
+	<update id="updateStationId" parameterType="java.util.List">
+
+		UPDATE IQB_SYS_USER SET STATION_ID=NULL where ID IN
+		<foreach collection="list" item="item" index="index" open="("
+			separator="," close=")">
+			#{item.id}
+		</foreach>
+
+	</update>
+	
+	<!-- 根据orgId获取总部用户信息  -->
+	<select id="getHqUserCountByOrgId" parameterType="integer" resultType="integer">
+		SELECT 
+		  COUNT(1)
+		FROM
+		  IQB_SYS_USER isu 
+		WHERE isu.DELETE_FLAG = 1 
+		  AND isu.is_hq = '1' 
+		  AND isu.ORG_ID = #{orgId}
+	</select>
+	
+	<!-- 根据deptId获取总部用户信息  -->
+	<select id="getHqUserCountByDeptId" parameterType="integer" resultType="integer">
+		SELECT 
+		  COUNT(1)
+		FROM
+		  IQB_SYS_USER isu 
+		WHERE isu.DELETE_FLAG = 1 
+		  AND isu.is_hq = '1' 
+		  AND isu.DEPT_ID = #{deptId}
+	</select>
+	
+	
+	<select id="getSysUserAll" resultType="java.util.HashMap">
+	  SELECT
+	   USER_CODE as id, 
+	    CONCAT(USER_NAME,"(",USER_CODE,")") as text
+    FROM
+	    IQB_SYS_USER
+    WHERE
+	DELETE_FLAG = 1
+	</select>
+	<select id="getSysUserOrgan"  resultType="java.util.HashMap">
+	   SELECT
+	     USER_CODE as id, 
+	     CONCAT(USER_NAME,"(",USER_CODE,")") as text
+       FROM
+	     IQB_SYS_USER  u
+       LEFT JOIN IQB_SYS_ORGANIZATION_INFO i ON u.ORG_ID = i.ID
+       WHERE
+	    u.DELETE_FLAG = 1
+	 <if test="orgCode != null and orgCode != ''" >
+        	AND i.ORG_CODE = #{orgCode}
+      </if> 
+      <if test="userCode != null and userCode != ''" >
+        	AND u.USER_CODE != #{userCode}
+      </if> 
+   
+</select>
+
+   <select id="getSysUserName" parameterType="java.util.List"  resultType="com.iqb.etep.sysmanage.user.bean.SysUser" >
+        select 
+        ID as id , 
+        USER_Name as userName ,USER_CODE as userCode 
+        from IQB_SYS_USER
+		where  DELETE_FLAG=1 and
+        USER_CODE  IN
+      <foreach collection="list" item="item" index="index" open="("
+			separator="," close=")">
+			#{item.userCode}
+		</foreach>
+        
+	
+     </select>
+	
+	</mapper>

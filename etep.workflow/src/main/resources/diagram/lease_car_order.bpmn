@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:activiti="http://activiti.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://www.activiti.org/test">
+  <process id="lease_car_order" name="以租代购进件流程" isExecutable="true">
+    <startEvent id="startevent" name="开始"></startEvent>
+    <userTask id="lease_order" name="订单申请">
+      <extensionElements>
+        <activiti:formProperty id="taskUrl" name="审批页面" type="string" expression="/view/cfm/cfmSys/orderApproval/orderApply.html"></activiti:formProperty>
+        <activiti:formProperty id="displayUrl" name="查看页面" type="string" expression="/view/cfm/cfmSys/orderApproval/orderView.html"></activiti:formProperty>
+        <activiti:formProperty id="dataPermission" name="数据权限" type="string" expression="3"></activiti:formProperty>
+        <activiti:formProperty id="callback" name="回调类" type="string" expression="com.iqb.etep.workflow.task.service.impl.WfProcTaskCallBackDefaultService"></activiti:formProperty>
+      </extensionElements>
+    </userTask>
+    <sequenceFlow id="flow1" sourceRef="startevent" targetRef="lease_order"></sequenceFlow>
+    <userTask id="lease_risk" name="风控审批" activiti:candidateGroups="lease_risk_approve">
+      <extensionElements>
+        <activiti:formProperty id="taskUrl" name="审批页面" type="string" expression="/view/cfm/cfmSys/orderApproval/riskApproval.html"></activiti:formProperty>
+        <activiti:formProperty id="displayUrl" name="查看页面" type="string" expression="/view/cfm/cfmSys/orderApproval/riskView.html"></activiti:formProperty>
+        <activiti:formProperty id="dataPermission" name="数据权限" type="string" expression="3"></activiti:formProperty>
+        <activiti:formProperty id="callback" name="回调类" type="string" expression="com.iqb.etep.workflow.task.service.impl.WfProcTaskCallBackDefaultService"></activiti:formProperty>
+      </extensionElements>
+    </userTask>
+    <sequenceFlow id="flow2" sourceRef="lease_order" targetRef="lease_risk"></sequenceFlow>
+    <exclusiveGateway id="exclusivegateway1" name="Exclusive Gateway"></exclusiveGateway>
+    <sequenceFlow id="flow3" sourceRef="lease_risk" targetRef="exclusivegateway1"></sequenceFlow>
+    <endEvent id="endevent" name="结束"></endEvent>
+    <sequenceFlow id="flow4" name="审批未通过" sourceRef="exclusivegateway1" targetRef="endevent">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${procApprStatus==0}]]></conditionExpression>
+    </sequenceFlow>
+    <userTask id="lease_price" name="人工风控" activiti:candidateGroups="lease_price_confirm">
+      <extensionElements>
+        <activiti:formProperty id="taskUrl" name="审批页面" type="string" expression="/view/cfm/cfmSys/orderApproval/manualApproval.html"></activiti:formProperty>
+        <activiti:formProperty id="displayUrl" name="查看页面" type="string" expression="/view/cfm/cfmSys/orderApproval/manualView.html"></activiti:formProperty>
+        <activiti:formProperty id="dataPermission" name="数据权限" type="string" expression="0"></activiti:formProperty>
+        <activiti:formProperty id="callback" name="回调类" type="string" expression="com.iqb.etep.workflow.task.service.impl.WfProcTaskCallBackDefaultService"></activiti:formProperty>
+      </extensionElements>
+    </userTask>
+    <sequenceFlow id="flow5" name="审批通过" sourceRef="exclusivegateway1" targetRef="lease_price">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${procApprStatus==1}]]></conditionExpression>
+    </sequenceFlow>
+    <exclusiveGateway id="exclusivegateway2" name="Exclusive Gateway"></exclusiveGateway>
+    <sequenceFlow id="flow7" sourceRef="lease_price" targetRef="exclusivegateway2"></sequenceFlow>
+    <userTask id="lease_store" name="门店维护" activiti:candidateGroups="lease_store_maintain">
+      <extensionElements>
+        <activiti:formProperty id="taskUrl" name="审批页面" type="string" expression="/view/cfm/cfmSys/orderApproval/businessApproval.html"></activiti:formProperty>
+        <activiti:formProperty id="displayUrl" name="查看页面" type="string" expression="/view/cfm/cfmSys/orderApproval/businessView.html"></activiti:formProperty>
+        <activiti:formProperty id="dataPermission" name="数据权限" type="string" expression="3"></activiti:formProperty>
+        <activiti:formProperty id="callback" name="回调类" type="string" expression="com.iqb.etep.workflow.task.service.impl.WfProcTaskCallBackDefaultService"></activiti:formProperty>
+      </extensionElements>
+    </userTask>
+    <sequenceFlow id="flow8" name="审批通过" sourceRef="exclusivegateway2" targetRef="lease_store">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${procApprStatus==1}]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="flow9" name="审批未通过" sourceRef="exclusivegateway2" targetRef="endevent">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${procApprStatus==0}]]></conditionExpression>
+    </sequenceFlow>
+    <userTask id="lease_audit" name="内控审批" activiti:candidateGroups="lease_audit_approve">
+      <extensionElements>
+        <activiti:formProperty id="taskUrl" name="审批页面" type="string" expression="/view/cfm/cfmSys/orderApproval/innerApproval.html"></activiti:formProperty>
+        <activiti:formProperty id="displayUrl" name="查看页面" type="string" expression="/view/cfm/cfmSys/orderApproval/innerView.html"></activiti:formProperty>
+        <activiti:formProperty id="dataPermission" name="数据权限" type="string" expression="0"></activiti:formProperty>
+        <activiti:formProperty id="callback" name="回调类" type="string" expression="com.iqb.etep.workflow.task.service.impl.WfProcTaskCallBackDefaultService"></activiti:formProperty>
+      </extensionElements>
+    </userTask>
+    <sequenceFlow id="flow10" sourceRef="lease_store" targetRef="lease_audit"></sequenceFlow>
+    <exclusiveGateway id="exclusivegateway3" name="Exclusive Gateway"></exclusiveGateway>
+    <sequenceFlow id="flow11" sourceRef="lease_audit" targetRef="exclusivegateway3"></sequenceFlow>
+    <userTask id="lease_finance" name="财务确认" activiti:candidateGroups="lease_finance_confirm">
+      <extensionElements>
+        <activiti:formProperty id="taskUrl" name="审批页面" type="string" expression="/view/cfm/cfmSys/orderApproval/financeApproval.html"></activiti:formProperty>
+        <activiti:formProperty id="displayUrl" name="查看页面" type="string" expression="/view/cfm/cfmSys/orderApproval/financeView.html"></activiti:formProperty>
+        <activiti:formProperty id="dataPermission" name="数据权限" type="string" expression="0"></activiti:formProperty>
+      </extensionElements>
+    </userTask>
+    <sequenceFlow id="flow12" name="审批通过" sourceRef="exclusivegateway3" targetRef="lease_finance">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${procApprStatus==1}]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="flow13" name="审批未通过" sourceRef="exclusivegateway3" targetRef="lease_store">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${procApprStatus==0}]]></conditionExpression>
+    </sequenceFlow>
+    <userTask id="lease_project" name="项目初审" activiti:candidateGroups="lease_project_approve">
+      <extensionElements>
+        <activiti:formProperty id="taskUrl" name="审批页面" type="string" expression="/view/cfm/cfmSys/orderApproval/firstCheckApproval.html"></activiti:formProperty>
+        <activiti:formProperty id="displayUrl" name="查看页面" type="string" expression="/view/cfm/cfmSys/orderApproval/firstCheckView.html"></activiti:formProperty>
+        <activiti:formProperty id="dataPermission" name="数据权限" type="string" expression="3"></activiti:formProperty>
+        <activiti:formProperty id="callback" name="回调类" type="string" expression="com.iqb.etep.workflow.task.service.impl.WfProcTaskCallBackDefaultService"></activiti:formProperty>
+      </extensionElements>
+    </userTask>
+    <sequenceFlow id="flow14" sourceRef="lease_finance" targetRef="lease_project"></sequenceFlow>
+    <exclusiveGateway id="exclusivegateway4" name="Exclusive Gateway"></exclusiveGateway>
+    <sequenceFlow id="flow15" sourceRef="lease_project" targetRef="exclusivegateway4"></sequenceFlow>
+    <sequenceFlow id="flow16" name="审批通过" sourceRef="exclusivegateway4" targetRef="endevent">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${procApprStatus==1}]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="flow17" name="审批未通过" sourceRef="exclusivegateway4" targetRef="lease_store">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${procApprStatus==0}]]></conditionExpression>
+    </sequenceFlow>
+  </process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_lease_car_order">
+    <bpmndi:BPMNPlane bpmnElement="lease_car_order" id="BPMNPlane_lease_car_order">
+      <bpmndi:BPMNShape bpmnElement="startevent" id="BPMNShape_startevent">
+        <omgdc:Bounds height="35.0" width="35.0" x="10.0" y="80.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="lease_order" id="BPMNShape_lease_order">
+        <omgdc:Bounds height="55.0" width="105.0" x="80.0" y="71.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="lease_risk" id="BPMNShape_lease_risk">
+        <omgdc:Bounds height="55.0" width="105.0" x="232.0" y="71.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="exclusivegateway1" id="BPMNShape_exclusivegateway1">
+        <omgdc:Bounds height="40.0" width="40.0" x="380.0" y="77.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="endevent" id="BPMNShape_endevent">
+        <omgdc:Bounds height="35.0" width="35.0" x="663.0" y="350.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="lease_price" id="BPMNShape_lease_price">
+        <omgdc:Bounds height="55.0" width="105.0" x="507.0" y="70.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="exclusivegateway2" id="BPMNShape_exclusivegateway2">
+        <omgdc:Bounds height="40.0" width="40.0" x="660.0" y="78.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="lease_store" id="BPMNShape_lease_store">
+        <omgdc:Bounds height="55.0" width="105.0" x="780.0" y="71.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="lease_audit" id="BPMNShape_lease_audit">
+        <omgdc:Bounds height="55.0" width="105.0" x="936.0" y="71.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="exclusivegateway3" id="BPMNShape_exclusivegateway3">
+        <omgdc:Bounds height="40.0" width="40.0" x="968.0" y="227.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="lease_finance" id="BPMNShape_lease_finance">
+        <omgdc:Bounds height="55.0" width="105.0" x="1080.0" y="220.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="lease_project" id="BPMNShape_lease_project">
+        <omgdc:Bounds height="55.0" width="105.0" x="1080.0" y="340.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="exclusivegateway4" id="BPMNShape_exclusivegateway4">
+        <omgdc:Bounds height="40.0" width="40.0" x="812.0" y="347.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge bpmnElement="flow1" id="BPMNEdge_flow1">
+        <omgdi:waypoint x="45.0" y="97.0"></omgdi:waypoint>
+        <omgdi:waypoint x="80.0" y="98.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow2" id="BPMNEdge_flow2">
+        <omgdi:waypoint x="185.0" y="98.0"></omgdi:waypoint>
+        <omgdi:waypoint x="232.0" y="98.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow3" id="BPMNEdge_flow3">
+        <omgdi:waypoint x="337.0" y="98.0"></omgdi:waypoint>
+        <omgdi:waypoint x="380.0" y="97.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow4" id="BPMNEdge_flow4">
+        <omgdi:waypoint x="400.0" y="117.0"></omgdi:waypoint>
+        <omgdi:waypoint x="680.0" y="350.0"></omgdi:waypoint>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds height="16.0" width="80.0" x="450.0" y="206.0"></omgdc:Bounds>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow5" id="BPMNEdge_flow5">
+        <omgdi:waypoint x="420.0" y="97.0"></omgdi:waypoint>
+        <omgdi:waypoint x="507.0" y="97.0"></omgdi:waypoint>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds height="16.0" width="64.0" x="429.0" y="77.0"></omgdc:Bounds>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow7" id="BPMNEdge_flow7">
+        <omgdi:waypoint x="612.0" y="97.0"></omgdi:waypoint>
+        <omgdi:waypoint x="660.0" y="98.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow8" id="BPMNEdge_flow8">
+        <omgdi:waypoint x="700.0" y="98.0"></omgdi:waypoint>
+        <omgdi:waypoint x="780.0" y="98.0"></omgdi:waypoint>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds height="16.0" width="64.0" x="697.0" y="77.0"></omgdc:Bounds>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow9" id="BPMNEdge_flow9">
+        <omgdi:waypoint x="680.0" y="118.0"></omgdi:waypoint>
+        <omgdi:waypoint x="680.0" y="350.0"></omgdi:waypoint>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds height="16.0" width="80.0" x="640.0" y="189.0"></omgdc:Bounds>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow10" id="BPMNEdge_flow10">
+        <omgdi:waypoint x="885.0" y="98.0"></omgdi:waypoint>
+        <omgdi:waypoint x="936.0" y="98.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow11" id="BPMNEdge_flow11">
+        <omgdi:waypoint x="988.0" y="126.0"></omgdi:waypoint>
+        <omgdi:waypoint x="988.0" y="227.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow12" id="BPMNEdge_flow12">
+        <omgdi:waypoint x="1008.0" y="247.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1080.0" y="247.0"></omgdi:waypoint>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds height="16.0" width="64.0" x="1008.0" y="247.0"></omgdc:Bounds>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow13" id="BPMNEdge_flow13">
+        <omgdi:waypoint x="988.0" y="227.0"></omgdi:waypoint>
+        <omgdi:waypoint x="832.0" y="126.0"></omgdi:waypoint>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds height="16.0" width="80.0" x="890.0" y="175.0"></omgdc:Bounds>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow14" id="BPMNEdge_flow14">
+        <omgdi:waypoint x="1132.0" y="275.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1132.0" y="340.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow15" id="BPMNEdge_flow15">
+        <omgdi:waypoint x="1080.0" y="367.0"></omgdi:waypoint>
+        <omgdi:waypoint x="852.0" y="367.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow16" id="BPMNEdge_flow16">
+        <omgdi:waypoint x="812.0" y="367.0"></omgdi:waypoint>
+        <omgdi:waypoint x="698.0" y="367.0"></omgdi:waypoint>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds height="16.0" width="64.0" x="733.0" y="372.0"></omgdc:Bounds>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow17" id="BPMNEdge_flow17">
+        <omgdi:waypoint x="832.0" y="347.0"></omgdi:waypoint>
+        <omgdi:waypoint x="832.0" y="126.0"></omgdi:waypoint>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds height="16.0" width="80.0" x="787.0" y="256.0"></omgdc:Bounds>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>

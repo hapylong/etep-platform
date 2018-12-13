@@ -1,0 +1,507 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright 2010-2013 the original author or authors. Licensed under the 
+	Apache License, Version 2.0 (the "License"); you may not use this file except 
+	in compliance with the License. You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 
+	Unless required by applicable law or agreed to in writing, software distributed 
+	under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES 
+	OR CONDITIONS OF ANY KIND, either express or implied. See the License for 
+	the specific language governing permissions and limitations under the License. -->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.iqb.etep.sysmanage.station.dao.SysStationRoleDao">
+
+    <select id="selectStationRoleCount" resultType="java.lang.Integer" parameterType="java.lang.Integer">
+      select count(1)
+      from IQB_SYS_STATION_ROLE
+      <where>
+         <if test="orgId!=null">
+           ORG_ID=#{orgId,jdbcType=INTEGER}
+      </if>
+      <if test="stationCode!=null">
+          AND STATION_CODE=#{stationCode,jdbcType=VARCHAR}
+      </if>
+      <if test="stationRoleName!=null">
+         AND STATION_ROLE_NAME=#{stationRoleName,jdbcType=VARCHAR}
+      </if>
+      <if test="stationIsSuperadmin!=null">
+        AND STATION_IS_SUPERADMIN=#{stationIsSuperadmin,jdbcType=INTEGER}
+      </if>
+     <if test="stationStatus!=null">
+      AND STATION_STATUS=#{stationStatus,jdbcType=INTEGER}
+     </if>
+     <if test="createUser!=null">
+       AND CREATE_USER=#{createUser,jdbcType=VARCHAR}
+     </if>
+     <if test="createTime!=null">
+       AND CREATE_TIME=#{createTime,jdbcType=INTEGER}
+     </if>
+     <if test="version!=null">
+       AND VERSION=#{version,jdbcType=INTEGER}
+     </if>
+     <if test="remark!=null">
+      AND REMARK=#{remark,jdbcType=VARCHAR}
+     </if>
+     <if test="deleteFlag!=null">
+      AND DELETE_FLAG=#{deleteFlag,jdbcType=INTEGER}
+     </if>
+     <if test="lastUser!=null">
+     AND LAST_USER=#{lastUser,jdbcType=VARCHAR}
+     </if>
+     <if test="lastTime!=null">
+     AND LAST_TIME=#{lastTime,jdbcType=INTEGER}
+     </if>
+     <if test="id!=null">
+       AND ID=#{id,jdbcType=INTEGER}
+     </if>
+      </where>
+    
+    
+    </select>
+
+	<update id="updateSysStationRole" parameterType="com.iqb.etep.sysmanage.station.bean.SysStationRole">
+		update
+		IQB_SYS_STATION_ROLE set
+		STATION_ROLE_NAME=#{stationRoleName},STATION_CODE=#{stationCode},STATION_IS_SUPERADMIN=#{stationIsSuperadmin},ORG_ID=#{orgId},
+		STATION_STATUS=#{stationStatus},REMARK=#{remark}
+		where ID=#{id}
+	</update>
+	<delete id="deleteSysStationRoles" parameterType="java.util.List">
+		delete from STATION_ROLE_NAME where id in
+		<foreach collection="list" index="index" item="item" open="("
+			separator="," close=")">
+			#{item}
+
+		</foreach>
+	</delete>
+
+	<select id="selectStationName"  resultType="java.util.HashMap">
+		SELECT
+		IQB_SYS_STATION_ROLE.STATION_ROLE_NAME AS text,
+		IQB_SYS_STATION_ROLE.ID AS id
+		FROM
+		IQB_SYS_STATION_ROLE,
+		IQB_SYS_ORGANIZATION_INFO
+		WHERE
+		IQB_SYS_STATION_ROLE.ORG_ID = IQB_SYS_ORGANIZATION_INFO.ID
+		AND
+		IQB_SYS_STATION_ROLE.DELETE_FLAG = 1
+		AND IQB_SYS_STATION_ROLE.STATION_STATUS=1
+		AND IQB_SYS_ORGANIZATION_INFO.ID
+		IN (
+		SELECT
+		IQB_SYS_USER.ORG_ID
+		FROM
+		IQB_SYS_USER
+		WHERE
+		IQB_SYS_USER.USER_CODE =#{userCode}
+		)
+	</select>
+	
+	
+	<select id="selectHqStationNameCode" resultType="java.util.HashMap">
+	    SELECT
+	  IQB_SYS_STATION_ROLE.STATION_ROLE_NAME AS text,
+	  IQB_SYS_STATION_ROLE.ID AS id
+    FROM
+	IQB_SYS_STATION_ROLE
+     WHERE
+    IQB_SYS_STATION_ROLE. DELETE_FLAG=1 AND IQB_SYS_STATION_ROLE.STATION_STATUS=1
+    AND
+	IQB_SYS_STATION_ROLE.ID IN (
+		SELECT
+			IQB_SYS_STATION_ORGANIZATION.STATION_ID
+		FROM
+			IQB_SYS_STATION_ORGANIZATION
+		WHERE
+	    	IQB_SYS_STATION_ORGANIZATION.ORG_ID IN (
+				SELECT
+					ORG_ID
+				FROM
+					IQB_SYS_USER
+				WHERE
+					
+				 USER_CODE =#{userCode,jdbcType=VARCHAR} 
+				AND DELETE_FLAG=1
+			)
+	)
+	
+	</select>
+
+	<select id="selectHqStationNameByUserCode" resultMap="stationrolenames">
+		SELECT
+		IQB_SYS_STATION_ROLE.STATION_ROLE_NAME AS text,
+		IQB_SYS_STATION_ROLE.ID AS id
+		FROM
+		IQB_SYS_STATION_ROLE,
+		IQB_SYS_ORGANIZATION_INFO
+		WHERE
+		IQB_SYS_STATION_ROLE.ORG_ID = IQB_SYS_ORGANIZATION_INFO.ID
+		AND
+		IQB_SYS_STATION_ROLE.DELETE_FLAG = 1
+		AND IQB_SYS_ORGANIZATION_INFO.ID
+		IN (
+		SELECT
+		IQB_SYS_USER.ORG_ID
+		FROM
+		IQB_SYS_USER
+		WHERE
+		IQB_SYS_USER.USER_CODE =#{userCode}
+		)
+	</select>
+
+	<select id="selectHqStationName" resultType="java.util.HashMap">
+		SELECT 
+		  STATION_ROLE_NAME as text,
+		  ID  as id
+		FROM
+		  IQB_SYS_STATION_ROLE 
+		WHERE org_id IS NULL 
+		  AND DELETE_FLAG = '1' 
+		  AND STATION_STATUS = '1'
+	</select>
+
+	<select id="selectHqUserStationName" resultType="java.util.HashMap">
+	    SELECT 
+		  CONCAT(STATION_ROLE_NAME ,'(' , STATION_CODE, ')') AS 'text',
+		  STATION_CODE AS id 
+		FROM
+		  IQB_SYS_STATION_ROLE 
+		WHERE org_id IS NULL 
+		  AND DELETE_FLAG = '1' 
+		  AND STATION_STATUS = '1' 
+	</select>
+
+	<select id="selectStationRoleAll" parameterType="int"
+		resultMap="stationrolenames">
+
+		select ID as id, STATION_ROLE_NAME as
+		stationRoleName,Station_Code as
+		stationCode
+		from IQB_SYS_STATION_ROLE
+		where ID!=#{id} and DELETE_FLAG=1
+	</select>
+
+	<resultMap id="stationrolenames"
+		type="com.iqb.etep.sysmanage.station.bean.SysStationRole">
+		<id column="ID" property="id"></id>
+		<result column="STATION_ROLE_NAME" property="stationRoleName"></result>
+	</resultMap>
+	<sql id="Base_Column_List">
+		ID as id,ORG_ID as orgId ,STATION_CODE as stationCode
+		,STATION_ROLE_NAME
+		as stationRoleName,STATION_IS_SUPERADMIN as
+		stationIsSuperadmin,
+		STATION_STATUS as stationStatus, CREATE_USER as
+		createUser ,
+		CREATE_TIME as createTime, VERSION as version,REMARK as
+		remark ,
+		LAST_USER as lastUser,LAST_TIME as
+		lastTime
+	</sql>
+
+	<select id="stationRoleByPage" parameterType="java.util.Map"
+		resultMap="SysStationRoleMap">
+		SELECT
+		IQB_SYS_STATION_ROLE.ID,
+		IQB_SYS_STATION_ROLE.ORG_ID,
+		IQB_SYS_STATION_ROLE.STATION_CODE,
+		IQB_SYS_STATION_ROLE.STATION_ROLE_NAME,
+		IQB_SYS_STATION_ROLE.STATION_IS_SUPERADMIN,
+		IQB_SYS_STATION_ROLE.STATION_STATUS,
+		IQB_SYS_STATION_ROLE.REMARK,
+		IQB_SYS_ORGANIZATION_INFO.ORG_NAME
+		FROM
+		IQB_SYS_STATION_ROLE
+		LEFT JOIN IQB_SYS_ORGANIZATION_INFO ON IQB_SYS_STATION_ROLE.ORG_ID =
+		IQB_SYS_ORGANIZATION_INFO.ID
+		WHERE
+		IQB_SYS_STATION_ROLE.DELETE_FLAG = 1
+
+		<if test="stationRoleName!=null and stationRoleName!=''">
+			and STATION_ROLE_NAME like "%"#{stationRoleName}"%"
+		</if>
+		<if test="orgId!=null and orgId!=''">
+			and ORG_ID=#{orgId}
+		</if>
+		<if test="orgId==null or orgId==''">
+			and ORG_ID is not null
+		</if>
+		<if test="stationStatus!=null and stationStatus!=''">
+			and STATION_STATUS=#{stationStatus}
+		</if>
+		ORDER BY
+		IQB_SYS_ORGANIZATION_INFO.ORG_NAME,
+		IQB_SYS_STATION_ROLE.STATION_CODE DESC
+	</select>
+
+	<select id="getHqStationRoleByPage" parameterType="java.util.Map"
+		resultMap="SysStationRoleMap">
+		SELECT
+		IQB_SYS_STATION_ROLE.ID,
+		IQB_SYS_STATION_ROLE.ORG_ID,
+		IQB_SYS_STATION_ROLE.STATION_CODE,
+		IQB_SYS_STATION_ROLE.STATION_ROLE_NAME,
+		IQB_SYS_STATION_ROLE.STATION_IS_SUPERADMIN,
+		IQB_SYS_STATION_ROLE.STATION_STATUS,
+		IQB_SYS_STATION_ROLE.REMARK,
+		IQB_SYS_ORGANIZATION_INFO.ORG_NAME
+		FROM
+		IQB_SYS_STATION_ROLE
+		LEFT JOIN IQB_SYS_ORGANIZATION_INFO ON IQB_SYS_STATION_ROLE.ORG_ID =
+		IQB_SYS_ORGANIZATION_INFO.ID
+		WHERE
+		IQB_SYS_STATION_ROLE.DELETE_FLAG = 1 and org_id is null
+
+		<if test="stationRoleName!=null and stationRoleName!=''">
+			and STATION_ROLE_NAME like "%"#{stationRoleName}"%"
+		</if>
+		<if test="stationStatus!=null and stationStatus!=''">
+			and STATION_STATUS=#{stationStatus}
+		</if>
+		ORDER BY
+		IQB_SYS_ORGANIZATION_INFO.ORG_NAME,
+		IQB_SYS_STATION_ROLE.STATION_CODE DESC
+	</select>
+	<resultMap id="SysStationRoleMap"
+		type="com.iqb.etep.sysmanage.station.bean.SysStationRole">
+		<id column="ID" property="id"></id>
+		<result column="ORG_ID" property="orgId"/>
+		<result column="STATION_CODE" property="stationCode" />
+		<result column="STATION_ROLE_NAME" property="stationRoleName" />
+
+		<result column="STATION_IS_SUPERADMIN" property="stationIsSuperadmin" />
+		<result column="STATION_STATUS" property="stationStatus" />
+		<result column="ORG_NAME" property="orgName" />
+		<result column="REMARK" property="remark" />
+	</resultMap>
+
+
+	<select id="getSysStationRoleById" parameterType="java.lang.Integer"
+		resultType="com.iqb.etep.sysmanage.station.bean.SysStationRole">
+		select
+		<include refid="Base_Column_List" />
+		from IQB_SYS_STATION_ROLE where ID=#{id} and DELETE_FLAG=1
+
+	</select>
+
+	<update id="updateSysStationRoleLastUser" parameterType="com.iqb.etep.sysmanage.station.bean.SysStationRole">
+		update
+		IQB_SYS_STATION_ROLE set
+		LAST_USER=#{lastUser},LAST_TIME=#{lastTime},DELETE_FLAG=2
+		where
+		ID=#{id} ;
+	</update>
+
+	<update id="saveRoleInfo" parameterType="hashmap">
+		update IQB_SYS_USER SET
+		STATION_ID = ${stationId} WHERE USER_CODE= #{userCode} ;
+	</update>
+
+	<select id="getUserEnableRole" parameterType="hashmap"
+		resultType="com.iqb.etep.sysmanage.station.bean.SysStationRole">
+		select
+		<include refid="Base_Column_List" />
+		from IQB_SYS_STATION_ROLE where
+		ORG_ID=#{orgId} and  STATION_STATUS=1
+	</select>
+
+
+	<insert id="insertSysStationRole">
+		insert into IQB_SYS_STATION_ROLE (ORG_ID
+		,STATION_CODE,STATION_ROLE_NAME,STATION_IS_SUPERADMIN,STATION_STATUS,REMARK,
+		CREATE_USER,CREATE_TIME,VERSION,DELETE_FLAG,LAST_USER,LAST_TIME)
+		values
+		(#{orgId},#{stationCode},#{stationRoleName},#{stationIsSuperadmin},#{stationStatus},
+		#{remark},#{createUser},#{createTime},#{version},#{deleteFlag},#{lastUser},#{lastTime})
+	</insert>
+
+	<select id="selectExistStationCode" parameterType="String"
+		resultType="com.iqb.etep.sysmanage.station.bean.SysStationRole">
+		select
+		ID as id , STATION_CODE as stationCode
+		from
+		IQB_SYS_STATION_ROLE where STATION_CODE=#{stationCode} and
+		DELETE_FLAG=1;
+	</select>
+
+	<select id="selectExistStationName" parameterType="String"
+		resultType="com.iqb.etep.sysmanage.station.bean.SysStationRole">
+		select
+		ID as id , STATION_ROLE_NAME as stationRoleName
+		from
+		IQB_SYS_STATION_ROLE where DELETE_FLAG=1 and
+		STATION_ROLE_NAME=#{stationRoleName} ;
+	</select>
+
+	<select id="getStationNameAll" resultMap="stationame">
+		select ID as id,
+		STATION_ROLE_NAME as stationRoleName from
+		IQB_SYS_STATION_ROLE where
+		DELETE_FLAG=1
+	</select>
+	<resultMap id="stationame"
+		type="com.iqb.etep.sysmanage.station.bean.SysStationRole">
+		<result column="ID" property="id" />
+		<result column="STATION_ROLE_NAME" property="stationRoleName" />
+	</resultMap>
+   
+    <select id="selectAuthorizeUser" parameterType="string" resultMap="authorusername"> 
+	  SELECT 
+	  id 
+	FROM
+	  iqb_sys_user 
+	WHERE STATION_CODE LIKE "%"#{stationCode}"%"
+	  AND DELETE_FLAG = 1 
+	  AND STATUS = 1 
+    </select>
+   <resultMap  id="authorusername" type="com.iqb.etep.sysmanage.user.bean.SysUser">
+       <result column="ID" property="id"></result>
+    </resultMap>
+     
+    <select id="selectOrganizationStations"  parameterType="java.lang.Integer" resultType="java.lang.Integer">
+     SELECT
+	 count(1) AS number
+     FROM
+	 IQB_SYS_STATION_ROLE
+     WHERE
+	 ORG_ID = #{orgId}
+     AND DELETE_FLAG = 1
+    </select>
+
+    <select id="getHqRoleCountByMenuId" resultType="integer" parameterType="integer">
+    	SELECT 
+		  COUNT(1) 
+		FROM
+		  IQB_SYS_STATION_PURVIEW issp 
+		  LEFT JOIN IQB_SYS_STATION_ROLE issr 
+		    ON issp.STATION_ROLE_ID = issr.ID 
+		WHERE issr.ORG_ID IS NULL 
+		  AND issp.STATION_MENU_ID = #{menuId}
+    </select>
+    
+    <!-- 根据传入信息获取角色信息  -->
+    <select id="getHqStationRole" parameterType="com.iqb.etep.sysmanage.station.bean.SysStationRole" resultType="com.iqb.etep.sysmanage.station.bean.SysStationRole">
+	select STATION_CODE as stationCode, id
+	from IQB_SYS_STATION_ROLE 
+	<where>
+		<if test="stationCode!=null">
+		   STATION_CODE=#{stationCode,jdbcType=VARCHAR}
+		</if>
+		<if test="stationRoleName!=null">
+			and STATION_ROLE_NAME=#{stationRoleName,jdbcType=VARCHAR}
+		</if>
+		and  DELETE_FLAG=1
+	</where>
+	
+    </select>
+    
+       <!--通用角色 -->
+    <select id="selectHqStationNameByCode"  resultType="java.util.HashMap">
+   SELECT
+	   STATION_ROLE_NAME AS text,
+	    ID AS id
+   FROM
+	IQB_SYS_STATION_ROLE
+  WHERE
+	 DELETE_FLAG = 1
+   AND STATION_STATUS = 1
+   AND ORG_ID IS NULL;
+  
+  </select>
+  
+
+  <select id="selectHqStation" resultType="com.iqb.etep.sysmanage.organization.bean.TreeNode">
+  SELECT
+	ID AS id,
+	STATION_ROLE_NAME AS name
+  FROM
+	IQB_SYS_STATION_ROLE
+  WHERE
+	DELETE_FLAG = 1 AND STATION_STATUS=1
+ AND ORG_ID IS NULL
+  </select>
+    
+  <select id="getHqSysStation" parameterType="java.lang.Integer"  resultType="com.iqb.etep.sysmanage.organization.bean.TreeNode">
+ SELECT
+	IQB_SYS_STATION_ROLE.ID as id,
+	IQB_SYS_STATION_ROLE.STATION_ROLE_NAME as name
+  FROM
+	IQB_SYS_STATION_ROLE,
+	IQB_SYS_STATION_ORGANIZATION
+  WHERE
+	  IQB_SYS_STATION_ORGANIZATION.STATION_ID = IQB_SYS_STATION_ROLE.ID
+  AND IQB_SYS_STATION_ORGANIZATION.ORG_ID = #{orgId}
+  AND IQB_SYS_STATION_ROLE.DELETE_FLAG = 1
+  AND IQB_SYS_STATION_ROLE.STATION_STATUS=1
+ 
+  </select>
+ 
+ 
+  <insert id="insertSysStationOrgan"  parameterType="java.util.List">
+      insert into IQB_SYS_STATION_ORGANIZATION(ORG_ID,STATION_ID,CREATE_USER,CREATE_TIME)
+        values 
+       <foreach collection="list" item="item" index="index" separator=",">
+        (#{item.orgId},#{item.stationId},#{item.createUser},#{item.createTime})
+     </foreach>
+  </insert>
+
+   <delete id="deleteStationRoleOrgId"  parameterType="java.lang.Integer" >
+    delete 
+     from 
+     IQB_SYS_STATION_ORGANIZATION
+     where ORG_ID=#{newstationid,jdbcType=INTEGER}
+   </delete>
+   
+   <select id="selectAuthorizeOrgan" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+     SELECT
+       COUNT(1)
+     FROM
+	IQB_SYS_STATION_ROLE
+    JOIN IQB_SYS_STATION_ORGANIZATION ON IQB_SYS_STATION_ROLE.ID = IQB_SYS_STATION_ORGANIZATION.STATION_ID
+    WHERE  IQB_SYS_STATION_ROLE.ID =#{id} and IQB_SYS_STATION_ROLE.DELETE_FLAG=1
+   </select>
+ 
+ 	<!-- 通过机构id获取角色信息  -->
+	<select id="getRoleInfoByOrgId" resultType="map">
+		SELECT 
+		  CONCAT(STATION_ROLE_NAME ,'(' , STATION_CODE, ')') AS 'text',
+		  STATION_CODE AS id 
+		FROM
+		  IQB_SYS_STATION_ROLE 
+		WHERE DELETE_FLAG = 1 
+		  AND STATION_STATUS = 1
+		  AND ORG_ID = #{orgId}
+	</select>
+ 
+ 	<!-- 通过机构id获取角色信息  -->
+	<select id="getHqRoleInfoByOrgId" resultType="map">
+		SELECT 
+		  CONCAT(issr.STATION_ROLE_NAME ,'(' , issr.STATION_CODE, ')') AS 'text',
+		  issr.STATION_CODE AS id 
+		FROM
+		  IQB_SYS_STATION_ORGANIZATION isso 
+		  LEFT JOIN IQB_SYS_STATION_ROLE issr 
+		    ON isso.STATION_ID = issr.ID 
+		WHERE issr.DELETE_FLAG = 1 
+		  AND issr.STATION_STATUS = 1 
+		  AND isso.ORG_ID = #{orgId}
+	</select>
+	
+	<!-- 保存通用角色信息  -->
+	<select id="saveUserHqRoleInfo" parameterType="com.iqb.etep.sysmanage.user.bean.SysUser">
+		UPDATE IQB_SYS_USER SET STATION_CODE = #{stationCode} WHERE USER_CODE = #{userCode}
+	</select>
+	
+	<!-- 获取所有的角色信息  -->
+	<select id="getAllStationInfoForSelect" resultType="map">
+		SELECT 
+		  CONCAT(STATION_ROLE_NAME ,'(' , STATION_CODE, ')') AS 'text',
+		  STATION_CODE AS id 
+		FROM
+		  IQB_SYS_STATION_ROLE 
+		WHERE DELETE_FLAG = 1 
+		  AND STATION_STATUS = 1
+	</select>
+	
+</mapper>

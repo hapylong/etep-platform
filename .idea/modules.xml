@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/etep-platform.iml" filepath="$PROJECT_DIR$/etep-platform.iml" />
+      <module fileurl="file://$PROJECT_DIR$/etep.batch/etep.batch.iml" filepath="$PROJECT_DIR$/etep.batch/etep.batch.iml" />
+      <module fileurl="file://$PROJECT_DIR$/etep.common/etep.common.iml" filepath="$PROJECT_DIR$/etep.common/etep.common.iml" />
+      <module fileurl="file://$PROJECT_DIR$/etep.front/etep.front.iml" filepath="$PROJECT_DIR$/etep.front/etep.front.iml" />
+      <module fileurl="file://$PROJECT_DIR$/etep.sysmanage/etep.sysmanage.iml" filepath="$PROJECT_DIR$/etep.sysmanage/etep.sysmanage.iml" />
+      <module fileurl="file://$PROJECT_DIR$/etep.testcase/etep.testcase.iml" filepath="$PROJECT_DIR$/etep.testcase/etep.testcase.iml" />
+      <module fileurl="file://$PROJECT_DIR$/etep.web/etep.web.iml" filepath="$PROJECT_DIR$/etep.web/etep.web.iml" />
+      <module fileurl="file://$PROJECT_DIR$/etep.workflow/etep.workflow.iml" filepath="$PROJECT_DIR$/etep.workflow/etep.workflow.iml" />
+    </modules>
+  </component>
+</project>

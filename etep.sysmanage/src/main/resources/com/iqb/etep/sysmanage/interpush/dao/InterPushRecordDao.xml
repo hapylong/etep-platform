@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.iqb.etep.sysmanage.interpush.dao.InterPushRecordDao">
+	<!-- 插入推送数据记录表  -->
+	<insert id="insertInterPushPushRecord" parameterType="com.iqb.etep.sysmanage.interpush.bean.InterPushRecordBean">
+		INSERT INTO IQB_COMMON_PUSH_RECORD (
+		  COMMON_CODE, INITIATE, UUID, PUSH_TYPE, CREATE_TIME, RECEIVE, PUSH_STATUS
+		) 
+		VALUES
+		  (#{commonCode}, #{initiate}, #{uuid}, #{pushType}, #{createTime}, #{receive}, #{pushStatus})
+	</insert>
+	
+</mapper>

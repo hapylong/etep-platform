@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="etep.batch" />
+        <module name="etep.common" />
+        <module name="etep.front" />
+        <module name="etep.sysmanage" />
+        <module name="etep.testcase" />
+        <module name="etep.web" />
+        <module name="etep.workflow" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel target="1.8">
+      <module name="etep-platform" target="1.7" />
+      <module name="etep.batch" target="1.7" />
+      <module name="etep.common" target="1.7" />
+      <module name="etep.front" target="1.7" />
+      <module name="etep.sysmanage" target="1.7" />
+      <module name="etep.testcase" target="1.7" />
+      <module name="etep.web" target="1.7" />
+      <module name="etep.workflow" target="1.7" />
+    </bytecodeTargetLevel>
+  </component>
+</project>

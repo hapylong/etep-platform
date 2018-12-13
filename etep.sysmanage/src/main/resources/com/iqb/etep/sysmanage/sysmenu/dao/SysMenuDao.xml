@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.iqb.etep.sysmanage.sysmenu.dao.SysMenuDao" >
+  <resultMap id="BaseResultMap" type="com.iqb.etep.sysmanage.sysmenu.bean.SysMenu" >
+    <id column="ID" property="id" jdbcType="INTEGER" />
+    <result column="PARENT_ID" property="parentId" jdbcType="INTEGER" />
+    <result column="MENU_TYPE" property="menuType" jdbcType="INTEGER" />
+    <result column="MENU_CODE" property="menuCode" jdbcType="VARCHAR" />
+    <result column="MENU_NAME" property="menuName" jdbcType="VARCHAR" />
+    <result column="MENU_DESCRIPTION" property="menuDescription" jdbcType="VARCHAR" />
+    <result column="MENU_LEVEL" property="menuLevel" jdbcType="TINYINT" />
+    <result column="MENU_URL" property="menuUrl" jdbcType="VARCHAR" />
+    <result column="SEQUENCE" property="sequence" jdbcType="TINYINT" />
+    <result column="ACT_ID" property="actId" jdbcType="INTEGER" />
+    <result column="CREATE_USER" property="createUser" jdbcType="VARCHAR" />
+    <result column="CREATE_TIME" property="createTime" jdbcType="INTEGER" />
+    <result column="LAST_USER" property="lastUser" jdbcType="VARCHAR" />
+    <result column="LAST_TIME" property="lastTime" jdbcType="INTEGER" />
+    <result column="REMARK" property="remark" jdbcType="VARCHAR" />
+    <result column="IS_ENABLE" property="isEnable" jdbcType="TINYINT" />
+    <result column="DELETE_FLAG" property="deleteFlag" jdbcType="TINYINT" />
+    <result column="VERSION" property="version" jdbcType="TINYINT" />
+  </resultMap>
+  <resultMap id="InfoResultMap" type="com.iqb.etep.sysmanage.sysmenu.bean.SysMenuResult" extends="BaseResultMap" >   
+    <result column="PARENT_MENU_NAME" property="parentMenuName" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    ID, PARENT_ID, MENU_TYPE, MENU_CODE, MENU_NAME, MENU_DESCRIPTION, MENU_LEVEL, MENU_URL, SEQUENCE, ACT_ID, 
+    CREATE_USER, CREATE_TIME, LAST_USER, LAST_TIME, REMARK, IS_ENABLE, DELETE_FLAG, VERSION
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="InfoResultMap" parameterType="java.lang.Integer" >
+    SELECT 
+    a.ID, a.PARENT_ID, a.MENU_TYPE, a.MENU_CODE, a.MENU_NAME, a.MENU_DESCRIPTION, a.MENU_LEVEL, a.MENU_URL, a.SEQUENCE, a.ACT_ID, 
+    a.CREATE_USER, a.CREATE_TIME, a.LAST_USER, a.LAST_TIME, a.REMARK, a.IS_ENABLE, a.DELETE_FLAG, a.VERSION, b.MENU_NAME AS PARENT_MENU_NAME
+    FROM IQB_SYS_MENU a
+    LEFT JOIN IQB_SYS_MENU b
+    ON a.PARENT_ID = b.ID
+    WHERE a.ID = #{id,jdbcType=INTEGER} AND a.DELETE_FLAG = 1
+  </select>
+  <update id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    UPDATE IQB_SYS_MENU
+    SET DELETE_FLAG = 2
+    WHERE ID = #{id,jdbcType=INTEGER}
+  </update>
+  <select id="selectSelective" parameterType="java.util.Map" resultType="com.iqb.etep.sysmanage.sysmenu.bean.TreeNode">
+  	SELECT ID AS id, PARENT_ID as pId, MENU_NAME AS name, MENU_TYPE AS menuType
+    FROM IQB_SYS_MENU
+    WHERE DELETE_FLAG = 1
+    	<if test="orgId != null and orgId != ''" >
+	       AND ID IN (SELECT ORG_MENU_ID FROM IQB_SYS_ORGANIZATION_PURVIEW WHERE ORG_ID = #{orgId,jdbcType=INTEGER})
+	    </if>
+    ORDER BY MENU_LEVEL, SEQUENCE
+  </select>
+  <select id="selectMaxMenuCode" parameterType="java.lang.Integer" resultType="java.lang.String">
+    SELECT MAX(MENU_CODE) 
+    FROM IQB_SYS_MENU 
+    GROUP BY PARENT_ID HAVING PARENT_ID = #{parentId,jdbcType=INTEGER}
+  </select>
+   <select id="selectCountChildLevel" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+    SELECT COUNT(1)
+    FROM IQB_SYS_MENU 
+    WHERE PARENT_ID = #{id,jdbcType=INTEGER} AND DELETE_FLAG = 1
+  </select>
+  <select id="selectCountSelective" resultType="java.lang.Integer" parameterType="java.lang.Integer" >
+    SELECT COUNT(1)
+    FROM IQB_SYS_MENU
+	<where>
+		<if test="parentId != null" >
+	       PARENT_ID = #{parentId,jdbcType=INTEGER}
+	    </if>
+	    <if test="menuType != null" >
+	       AND MENU_TYPE = #{menuType,jdbcType=INTEGER}
+	    </if>
+	    <if test="menuCode != null" >
+	       AND MENU_CODE = #{menuCode,jdbcType=VARCHAR}
+	    </if>
+	    <if test="menuName != null" >
+	        AND MENU_NAME = #{menuName,jdbcType=VARCHAR}
+	    </if>
+	    <if test="menuDescription != null" >
+	        AND MENU_DESCRIPTION = #{menuDescription,jdbcType=VARCHAR}
+	    </if>
+	    <if test="menuLevel != null" >
+	        AND MENU_LEVEL = #{menuLevel,jdbcType=TINYINT}
+	    </if>
+	    <if test="menuUrl != null" >
+	        AND MENU_URL = #{menuUrl,jdbcType=VARCHAR}
+	    </if>
+	    <if test="sequence != null" >
+	        AND SEQUENCE = #{sequence,jdbcType=TINYINT}
+	    </if>
+	    <if test="actId != null" >
+	        AND ACT_ID = #{actId,jdbcType=INTEGER}
+	    </if>
+	    <if test="createUser != null" >
+	        AND CREATE_USER = #{createUser,jdbcType=VARCHAR}
+	    </if>
+	    <if test="createTime != null" >
+	        AND CREATE_TIME = #{createTime,jdbcType=INTEGER}
+	    </if>
+	    <if test="lastUser != null" >
+	        AND LAST_USER = #{lastUser,jdbcType=VARCHAR}
+	    </if>
+	    <if test="lastTime != null" >
+	        AND LAST_TIME = #{lastTime,jdbcType=INTEGER}
+	    </if>
+	    <if test="remark != null" >
+	        AND REMARK = #{remark,jdbcType=VARCHAR}
+	    </if>
+	    <if test="isEnable != null" >
+	        AND IS_ENABLE = #{isEnable,jdbcType=TINYINT}
+	    </if>
+	    <if test="deleteFlag != null" >
+	        AND DELETE_FLAG = #{deleteFlag,jdbcType=TINYINT}
+	    </if>
+	    <if test="version != null" >
+	        AND VERSION = #{version,jdbcType=TINYINT}
+	    </if>
+      	<if test="id != null" >
+        	AND ID = #{id,jdbcType=INTEGER}
+      	</if>
+	</where>
+  </select>
+  <insert id="insert" parameterType="com.iqb.etep.sysmanage.sysmenu.bean.SysMenu" >
+    insert into IQB_SYS_MENU (PARENT_ID, MENU_TYPE, MENU_CODE, MENU_NAME, 
+      MENU_DESCRIPTION, MENU_LEVEL, MENU_URL, 
+      SEQUENCE, ACT_ID, CREATE_USER, 
+      CREATE_TIME, LAST_USER, LAST_TIME, 
+      REMARK, IS_ENABLE, DELETE_FLAG, 
+      VERSION)
+    values (#{parentId,jdbcType=INTEGER}, #{menuType,jdbcType=INTEGER}, #{menuCode,jdbcType=VARCHAR}, #{menuName,jdbcType=VARCHAR}, 
+      #{menuDescription,jdbcType=VARCHAR}, #{menuLevel,jdbcType=TINYINT}, #{menuUrl,jdbcType=VARCHAR}, 
+      #{sequence,jdbcType=TINYINT}, #{actId,jdbcType=INTEGER}, #{createUser,jdbcType=VARCHAR}, 
+      #{createTime,jdbcType=INTEGER}, #{lastUser,jdbcType=VARCHAR}, #{lastTime,jdbcType=INTEGER}, 
+      #{remark,jdbcType=VARCHAR}, #{isEnable,jdbcType=TINYINT}, #{deleteFlag,jdbcType=TINYINT}, 
+      #{version,jdbcType=TINYINT})
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.iqb.etep.sysmanage.sysmenu.bean.SysMenu" >
+    update IQB_SYS_MENU
+    <set >
+      <if test="parentId != null" >
+        PARENT_ID = #{parentId,jdbcType=INTEGER},
+      </if>
+      <if test="menuType != null" >
+        MENU_TYPE = #{menuType,jdbcType=INTEGER},
+      </if>
+      <if test="menuCode != null" >
+        MENU_CODE = #{menuCode,jdbcType=VARCHAR},
+      </if>
+      <if test="menuName != null" >
+        MENU_NAME = #{menuName,jdbcType=VARCHAR},
+      </if>
+      <if test="menuDescription != null" >
+        MENU_DESCRIPTION = #{menuDescription,jdbcType=VARCHAR},
+      </if>
+      <if test="menuLevel != null" >
+        MENU_LEVEL = #{menuLevel,jdbcType=TINYINT},
+      </if>
+      <if test="menuUrl != null" >
+        MENU_URL = #{menuUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="sequence != null" >
+        SEQUENCE = #{sequence,jdbcType=TINYINT},
+      </if>
+      <if test="actId != null" >
+        ACT_ID = #{actId,jdbcType=INTEGER},
+      </if>
+      <if test="createUser != null" >
+        CREATE_USER = #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        CREATE_TIME = #{createTime,jdbcType=INTEGER},
+      </if>
+      <if test="lastUser != null" >
+        LAST_USER = #{lastUser,jdbcType=VARCHAR},
+      </if>
+      <if test="lastTime != null" >
+        LAST_TIME = #{lastTime,jdbcType=INTEGER},
+      </if>
+      <if test="remark != null" >
+        REMARK = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="isEnable != null" >
+        IS_ENABLE = #{isEnable,jdbcType=TINYINT},
+      </if>
+      <if test="deleteFlag != null" >
+        DELETE_FLAG = #{deleteFlag,jdbcType=TINYINT},
+      </if>
+      <if test="version != null" >
+        VERSION = #{version,jdbcType=TINYINT},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.iqb.etep.sysmanage.sysmenu.bean.SysMenu" >
+    update IQB_SYS_MENU
+    set PARENT_ID = #{parentId,jdbcType=INTEGER},
+      MENU_TYPE = #{menuType,jdbcType=INTEGER},
+      MENU_CODE = #{menuCode,jdbcType=VARCHAR},
+      MENU_NAME = #{menuName,jdbcType=VARCHAR},
+      MENU_DESCRIPTION = #{menuDescription,jdbcType=VARCHAR},
+      MENU_LEVEL = #{menuLevel,jdbcType=TINYINT},
+      MENU_URL = #{menuUrl,jdbcType=VARCHAR},
+      SEQUENCE = #{sequence,jdbcType=TINYINT},
+      ACT_ID = #{actId,jdbcType=INTEGER},
+      CREATE_USER = #{createUser,jdbcType=VARCHAR},
+      CREATE_TIME = #{createTime,jdbcType=INTEGER},
+      LAST_USER = #{lastUser,jdbcType=VARCHAR},
+      LAST_TIME = #{lastTime,jdbcType=INTEGER},
+      REMARK = #{remark,jdbcType=VARCHAR},
+      IS_ENABLE = #{isEnable,jdbcType=TINYINT},
+      DELETE_FLAG = #{deleteFlag,jdbcType=TINYINT},
+      VERSION = #{version,jdbcType=TINYINT}
+    where ID = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

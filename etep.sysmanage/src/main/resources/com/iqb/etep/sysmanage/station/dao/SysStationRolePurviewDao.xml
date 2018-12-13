@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright 2010-2013 the original author or authors. Licensed under the 
+	Apache License, Version 2.0 (the "License"); you may not use this file except 
+	in compliance with the License. You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 
+	Unless required by applicable law or agreed to in writing, software distributed 
+	under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES 
+	OR CONDITIONS OF ANY KIND, either express or implied. See the License for 
+	the specific language governing permissions and limitations under the License. -->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.iqb.etep.sysmanage.station.dao.SysStationRolePurviewDao">
+	<insert id="insertPurview" parameterType="java.util.List">
+		insert into IQB_SYS_STATION_PURVIEW (STATION_ROLE_ID,STATION_MENU_ID)
+		values
+		<foreach collection="list" item="item" index="index"
+			separator=",">
+			( #{item.stationRoleId}, #{item.stationMenuId})
+		</foreach>
+	</insert>
+	
+	<!-- 查询角色菜单权限 -->
+	<select id="selectSelective" resultType="com.iqb.etep.sysmanage.sysmenu.bean.TreeNode" parameterType="java.lang.Integer" >
+		SELECT 
+		  ism.ID AS id,
+		  ism.PARENT_ID AS pId,
+		  ism.MENU_NAME AS NAME,
+		  ism.MENU_URL AS url
+		FROM
+		  IQB_SYS_STATION_PURVIEW issp 
+		  LEFT JOIN IQB_SYS_MENU ism 
+		    ON issp.STATION_MENU_ID = ism.ID 
+		  LEFT JOIN IQB_SYS_STATION_ROLE issr 
+		    ON issp.STATION_ROLE_ID = issr.ID 
+		WHERE issr.STATION_STATUS = '1' 
+		  AND issp.STATION_ROLE_ID = #{roleId,jdbcType=INTEGER}  
+		ORDER BY ism.MENU_LEVEL,
+		  ism.SEQUENCE 
+  	</select>
+  	
+  	<!-- 根据角色id删除角色菜单权限 -->
+  	<delete id="deleteByRoleId" parameterType="java.lang.Integer" >
+	  	DELETE 
+		FROM
+		  IQB_SYS_STATION_PURVIEW 
+		WHERE STATION_ROLE_ID = #{newstationid,jdbcType=INTEGER} 
+  </delete>
+	
+	<!-- 获取角色id集合  -->
+	<select id="getStationIdList" resultType="string">
+		SELECT 
+		  ID 
+		FROM
+		  iqb_sys_station_role 
+		WHERE DELETE_FLAG = 1 
+		  AND STATION_STATUS = 1 
+		  AND STATION_CODE IN 
+		<foreach collection="list" item="stationCode" index="index"
+            open="(" close=")" separator=",">
+            #{stationCode}
+        </foreach>
+	</select>
+	
+	<!-- 获取角色菜单权限  -->
+	<select id="selectSelectiveByStationIdList" resultType="com.iqb.etep.sysmanage.sysmenu.bean.TreeNode">
+		SELECT 
+		  t.ID AS id,
+		  t.PARENT_ID AS pId,
+		  t.MENU_NAME AS NAME,
+		  t.MENU_URL AS url 
+		FROM
+		  IQB_SYS_MENU t 
+		WHERE t.ID IN 
+		  (SELECT DISTINCT 
+		    (issp.STATION_MENU_ID) 
+		  FROM
+		    IQB_SYS_STATION_PURVIEW issp 
+		    LEFT JOIN IQB_SYS_STATION_ROLE issr 
+		      ON issp.STATION_ROLE_ID = issr.ID 
+		  WHERE issr.STATION_STATUS = '1' 
+		    AND issp.STATION_ROLE_ID IN
+		    <foreach collection="list" item="stationId" index="index"
+	            open="(" close=")" separator=",">
+	            #{stationId}
+	        </foreach>)
+		ORDER BY t.MENU_LEVEL, t.SEQUENCE ;
+	</select>
+</mapper>
